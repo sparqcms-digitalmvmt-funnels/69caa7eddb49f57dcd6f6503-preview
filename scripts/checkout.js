@@ -57,7 +57,7 @@ const CHECKOUT_NEXT_PAGE_SLUG = "";
 function getNextPageSlugForRedirect() {
   const normalize = (value) => {
     if (!value) return "";
-    return value.startsWith("/") ? value : "/" + value;
+    return value.startsWith("/69caa7eddb49f57dcd6f6503-preview") ? value : (value.startsWith("/") ? "/69caa7eddb49f57dcd6f6503-preview" + value : "/69caa7eddb49f57dcd6f6503-preview/" + value);
   };
 
   try {
@@ -246,7 +246,16 @@ const i18n = {
   "labels": {
     "noStatesAvailable": "Keine Bundesländer für dieses Land verfügbar",
     "selectState": "Bundesland auswählen",
-    "phoneSearchPlaceholder": "Suchen"
+    "phoneSearchPlaceholder": "Suchen",
+    "processing": "Wird verarbeitet...",
+    "close": "Schließen",
+    "cvvModalTitle": "Wo befindet sich mein Sicherheitscode?",
+    "cvvCardBack": "Rückseite der Karte",
+    "cvvCardFront": "Vorderseite der Karte",
+    "cvvThreeDigitLabel": "3-stellige CVV-Nummer",
+    "cvvFourDigitLabel": "4-stellige CVV-Nummer",
+    "cvvBackDescription": "Der 3-stellige Sicherheitscode (CVV) befindet sich auf der Rückseite Ihrer Karte, rechts neben dem Unterschriftsstreifen.",
+    "cvvFrontDescription": "American-Express-Karten haben einen 4-stelligen Code auf der Vorderseite."
   }
 };
 
@@ -610,7 +619,7 @@ async function createOrderViaWallet(confirmationToken, paymentMethodId) {
         ?.getAttribute("data-shipping-profile-id") || undefined;
 
   const orderData = {
-    pageId: "0jBspm8LH6wnlGdkwRh-tFEHw0JJVKtRQoyPh1A76Zssb7U1S5shpg5Hpzx_XWHL",
+    pageId: "lVjAjmkPCKPR4cjMNLQM-9kLsNqyJrEU_9pZsQVDfryXnJMLs_Q9cR3YD7MtLdTB",
     action: "process",
     campaign_id: CAMPAIGN_ID,
     connection_id: 1,
@@ -772,6 +781,7 @@ async function createOrderViaWallet(confirmationToken, paymentMethodId) {
   if (isTest && window.location.hostname === "localhost") {
     console.log("Sending wallet order to VRIO", { sanitizedOrderData });
   }
+  try { sessionStorage.removeItem('klaviyo_profile_updated'); } catch(e) {}
   try {
     if (typeof validateAndSendToKlaviyo === "function") {
       const klaviyoPreOrderData = { ...sanitizedOrderData };
@@ -903,6 +913,13 @@ async function createOrderViaWallet(confirmationToken, paymentMethodId) {
       }
     } catch (error) {
       console.error("Error validating and sending to Klaviyo", error);
+    }
+    try {
+      if (typeof sendKlaviyoOrderEvents === 'function') {
+        await sendKlaviyoOrderEvents(sanitizedOrderData, result, true);
+      }
+    } catch (error) {
+      console.error("Error sending order events to Klaviyo", error);
     }
     MVMT.track("ORDER_SUCCESS", {
       page: "Checkout",
@@ -1317,7 +1334,7 @@ function getInPurchaseUpsells() {
             DEFAULT_OFFER_ID,
           item_id: Number(product.dataset.productId),
           order_offer_quantity:
-            Number(product.getAttribute("data-product-quantity")) || 1
+            Number(product.getAttribute("data-non-shippable-quantity") || product.getAttribute("data-product-quantity")) || 1
         };
       }
       const isInput = product.tagName.toLowerCase() === "input";
@@ -1398,7 +1415,7 @@ async function createOrderViaPaypal(isExpress = false) {
   const shippingProfileId = +document.querySelector(`[data-product-id="${selectedProduct.id}"]`)?.getAttribute('data-shipping-profile-id') || undefined;
   const sameAddress = isSameAddress();
   const orderData = {
-    pageId: "0jBspm8LH6wnlGdkwRh-tFEHw0JJVKtRQoyPh1A76Zssb7U1S5shpg5Hpzx_XWHL",
+    pageId: "lVjAjmkPCKPR4cjMNLQM-9kLsNqyJrEU_9pZsQVDfryXnJMLs_Q9cR3YD7MtLdTB",
     action: "process",
     campaign_id: CAMPAIGN_ID,
     connection_id: 1, // VRIO URL ending /connection
@@ -1583,6 +1600,7 @@ async function createOrderViaPaypal(isExpress = false) {
   if (isTest && window.location.hostname === "localhost") {
     console.log("Sending order to VRIO", { sanitizedOrderData });
   }
+  try { sessionStorage.removeItem('klaviyo_profile_updated'); } catch(e) {}
   try {
     if (typeof validateAndSendToKlaviyo === "function") {
       const klaviyoPreOrderData = { ...sanitizedOrderData };
@@ -1697,7 +1715,7 @@ async function createOrderViaKlarna() {
   const sameAddress = isSameAddress();
 
   const orderData = {
-    pageId: "0jBspm8LH6wnlGdkwRh-tFEHw0JJVKtRQoyPh1A76Zssb7U1S5shpg5Hpzx_XWHL",
+    pageId: "lVjAjmkPCKPR4cjMNLQM-9kLsNqyJrEU_9pZsQVDfryXnJMLs_Q9cR3YD7MtLdTB",
     campaign_id: CAMPAIGN_ID,
     connection_id: 1,
     email: email,
@@ -1894,6 +1912,7 @@ async function createOrderViaKlarna() {
     console.log("Sending Klarna order to VRIO", { sanitizedOrderData });
   }
 
+  try { sessionStorage.removeItem('klaviyo_profile_updated'); } catch(e) {}
   try {
     if (typeof validateAndSendToKlaviyo === "function") {
       const klaviyoPreOrderData = { ...sanitizedOrderData };
@@ -2075,7 +2094,7 @@ async function createOrderViaCreditCard() {
   let orderTotal = Math.max(0, Number(selectedProduct.price) * selectedProduct.quantity);
 
   const orderData = {
-    pageId: "0jBspm8LH6wnlGdkwRh-tFEHw0JJVKtRQoyPh1A76Zssb7U1S5shpg5Hpzx_XWHL",
+    pageId: "lVjAjmkPCKPR4cjMNLQM-9kLsNqyJrEU_9pZsQVDfryXnJMLs_Q9cR3YD7MtLdTB",
     action: "process",
     campaign_id: CAMPAIGN_ID,
     connection_id: 1, // VRIO URL ending /connection
@@ -2383,6 +2402,13 @@ async function createOrderViaCreditCard() {
     } catch (error) {
       console.error("Error validating and sending to Klaviyo", error);
     }
+    try {
+      if (typeof sendKlaviyoOrderEvents === 'function') {
+        await sendKlaviyoOrderEvents(sanitizedOrderData, result, true);
+      }
+    } catch (error) {
+      console.error("Error sending order events to Klaviyo", error);
+    }
 
     let orderSummary = sessionStorage.getItem("orderSummary");
     if (!orderSummary) {
@@ -2563,6 +2589,7 @@ async function sendLead() {
     page_url: window.location.href,
     order_data: sanitizedOrderData,
   });
+  try { sessionStorage.removeItem('klaviyo_profile_updated'); } catch(e) {}
   try {
     if (typeof validateAndSendToKlaviyo === "function") {
       const klaviyoLeadData = {
@@ -2758,8 +2785,60 @@ const populateCountries = (countryEl) => {
   }
 };
 
-// After the DOM is loaded, we can start to interact with the elements
+
+
 document.addEventListener("DOMContentLoaded", async () => {
+  
+(function ensurePreloaderExists() {
+    if (document.querySelector('[data-preloader]')) return;
+    const loaderOverlay = document.createElement('div');
+    loaderOverlay.setAttribute('data-preloader', '');
+    loaderOverlay.innerHTML = `
+        <div class="loader"></div>
+        <p>${i18n.labels.processing}</p>
+    `;
+
+    const loaderStyles = `
+        [data-preloader] {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            z-index: 9999;
+        }
+        [data-preloader] .loader {
+            width: 48px;
+            height: 48px;
+            border-bottom-color: transparent !important;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+            margin-top: 22px;
+            border: 5px solid rgb(18, 76, 117);
+        }
+
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    `;
+    document.head.insertAdjacentHTML('beforeend', `<style>${loaderStyles}</style>`);
+    document.body.appendChild(loaderOverlay);
+})();
+
   try {
     initVrioWallets();
   } catch (error) {
@@ -2906,7 +2985,20 @@ if (typeof validateAndSendToKlaviyo === "function") {
       } catch (error) {
         console.error("Error sending transaction to data layer", error);
       }
-      window.location.href = "/" + nextPageSlug;
+      try {
+        if (typeof sendKlaviyoOrderEvents === 'function') {
+          await sendKlaviyoOrderEvents(orderData, result, true);
+        }
+      } catch (error) {
+        console.error("Error sending order events to Klaviyo", error);
+      }
+      const redirectSlug =
+        typeof nextPageSlug === "string" && nextPageSlug.length > 0
+          ? nextPageSlug.startsWith("/")
+            ? nextPageSlug
+            : "/" + nextPageSlug
+          : "/";
+      window.location.href = redirectSlug;
     } else {
       if (!isLive) await flagOrderAsTest(resultOrderId);
 
@@ -4017,6 +4109,290 @@ const upsellControls = document.querySelectorAll(
 
 onPaymentMethodChange();
 await initializeFormValidation();
+
+(function ensureCvvToolTipExists() {
+  let cvvToolTipEl = document.querySelector(".cvvTooltip");
+  let cvvOverlay = document.getElementById("cvvOverlay");
+
+  (function ensureToolTipExists() {
+    if (cvvToolTipEl) return;
+    const cvvField = document.querySelector("[data-card-cvv]");
+    const toolTipSize =
+      parseFloat(window.getComputedStyle(cvvField).height) - 24;
+    cvvToolTipEl = document.createElement("div");
+    cvvToolTipEl.classList.add("cvvTooltip");
+    cvvToolTipEl.textContent = "?";
+    cvvField.parentNode.style.position = "relative";
+
+    const cvvFieldWrapperCoords = cvvField.parentNode.getBoundingClientRect();
+    const cvvFieldCoords = cvvField.getBoundingClientRect();
+    const cvvFieldToolTipCoords = {
+      top: cvvFieldCoords.top - cvvFieldWrapperCoords.top + 12,
+      left: cvvFieldCoords.right - cvvFieldWrapperCoords.right,
+    };
+
+    const cvvToolTipStyles = `
+    <style>
+      .cvvTooltip {
+        width: ${toolTipSize}px;
+        height: ${toolTipSize}px;
+        font-size: ${toolTipSize - 5}px;
+        display: flex;
+        border: 1px solid;
+        border-radius: 99px;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        right: 22px;
+        top: ${cvvFieldToolTipCoords.top}px;
+        cursor: pointer;
+        opacity: 0.65;
+      }
+      .cvvTooltip:hover {
+        opacity: 1;
+      }
+    </style>
+    `;
+    document.head.insertAdjacentHTML("beforeend", cvvToolTipStyles);
+    cvvField.parentNode.appendChild(cvvToolTipEl);
+  })();
+
+  (function ensureCvvOverlayExists() {
+    if (cvvOverlay) return;
+    cvvOverlay = document.createElement("div");
+    cvvOverlay.id = "cvvOverlay";
+    cvvOverlay.className = "cvvOverlay";
+    cvvOverlay.setAttribute("role", "dialog");
+    cvvOverlay.setAttribute("aria-modal", "true");
+    const modalStyles = `
+    <style>
+      .cvvOverlay {
+        --color-text-primary: #111827;
+        --color-text-secondary: #6b7280;
+        --color-background-primary: #ffffff;
+        --color-background-secondary: #f3f4f6;
+        --color-background-info: #eff6ff;
+        --color-border-secondary: #d1d5db;
+        --color-border-tertiary: #e5e7eb;
+        --border-radius-md: 6px;
+        --border-radius-lg: 12px;
+
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.42);
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+
+        * {
+          margin: 0;
+          padding: 0;
+        }
+
+        &.open {
+          display: flex;
+        }
+
+        .modal {
+          background: var(--color-background-primary);
+          border-radius: var(--border-radius-lg);
+          border: 0.5px solid var(--color-border-tertiary);
+          padding: 1.5rem;
+          width: 590px;
+          position: relative;
+        }
+
+        .modal-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 1rem;
+        }
+
+        .modal-title {
+          font-size: 20px;
+          font-weight: 500;
+          color: var(--color-text-primary);
+          margin: auto;
+        }
+
+        .close-btn {
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+          border: 0.5px solid var(--color-border-secondary);
+          background: transparent;
+          color: var(--color-text-secondary);
+          font-size: 16px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: absolute;
+          top: 12px;
+          right: 12px;
+        }
+
+        .close-btn:hover {
+          background: var(--color-background-secondary);
+        }
+
+        .modal-body p {
+          font-size: 13px;
+          color: var(--color-text-secondary);
+          line-height: 1.6;
+          margin-top: .75rem;
+        }
+
+        .card-scene {
+          display: flex;
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+
+        .card-group {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .card-face-label {
+          font-size: 12px;
+          font-weight: 700;
+          color: var(--color-text-primary);
+          margin-bottom: 0.5rem;
+        }
+
+        .card {
+          width: 238px;
+          height: 146px;
+          border-radius: 12px;
+          position: relative;
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+
+        .card img {
+          width: 100%;
+        }
+
+        .arrow-wrap {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .arrow-bottom-line {
+          height: 2px;
+          background-color: #1DBDE4;
+          width: 80px;
+          position: absolute;
+          bottom: 0px;
+          right: 39.7px;
+        }
+
+        .card-front .arrow-bottom-line {
+          width: 83px;
+          right: 36.7px;
+        }
+
+        .arrow-line {
+          width: 1.5px;
+          height: 4px;
+          background: #1DBDE4;
+        }
+
+        .arrow-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #1DBDE4;
+        }
+
+        .arrow-label {
+          margin-top: 4px;
+          font-size: 11px;
+          color: var(--color-text-secondary);
+          white-space: nowrap;
+        }
+
+        .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
+        }
+
+        .card-group--back .arrow-label,
+        .card-group--front .arrow-label {
+          white-space: normal;
+        }
+      }
+    </style>
+    `;
+    cvvOverlay.innerHTML = `
+    <div class="modal">
+      <button class="close-btn" id="cvvCloseBtn" aria-label="${i18n.labels.close}">X</button>
+      <div class="modal-header">
+        <span class="modal-title" id="modalTitle">${i18n.labels.cvvModalTitle}</span>
+      </div>
+      <div class="card-scene">
+        <div class="card-group card-group--back">
+          <span class="card-face-label">${i18n.labels.cvvCardBack}</span>
+          <div class="card card-back">
+            <img src="https://stdigitalmvmtprod001.blob.core.windows.net/assets/develop/back-of-card.webp" alt="" />
+            <div class="arrow-bottom-line"></div>
+          </div>
+          <div class="arrow-wrap">
+            <div class="arrow-line"></div>
+            <div class="arrow-dot"></div>
+            <span class="arrow-label">${i18n.labels.cvvThreeDigitLabel}</span>
+          </div>
+        </div>
+        <div class="card-group card-group--front">
+          <span class="card-face-label">${i18n.labels.cvvCardFront}</span>
+          <div class="card card-front">
+            <img src="https://stdigitalmvmtprod001.blob.core.windows.net/assets/develop/front-of-card.webp" alt="" />
+            <div class="arrow-bottom-line"></div>
+          </div>
+          <div class="arrow-wrap">
+            <div class="arrow-line"></div>
+            <div class="arrow-dot"></div>
+            <span class="arrow-label">${i18n.labels.cvvFourDigitLabel}</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <p>${i18n.labels.cvvBackDescription}</p>
+        <p>${i18n.labels.cvvFrontDescription}</p>
+      </div>
+    </div>
+    `;
+    document.head.insertAdjacentHTML("beforeend", modalStyles);
+    document.body.appendChild(cvvOverlay);
+  })();
+
+  const cvvOpenBtn = cvvToolTipEl;
+  const cvvCloseBtn = document.getElementById("cvvCloseBtn");
+  const closeCvvModal = () => cvvOverlay.classList.remove("open");
+  const openCvvModal = () => cvvOverlay.classList.add("open");
+  cvvOpenBtn.addEventListener("click", openCvvModal);
+  cvvCloseBtn.addEventListener("click", closeCvvModal);
+  cvvOverlay.addEventListener("click", (e) => {
+    if (e.target === cvvOverlay) closeCvvModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeCvvModal();
+  });
+})();
+
 });
 
 async function returnPaypal() {
@@ -4116,7 +4492,7 @@ async function returnPaypal() {
 ;
 
     const body = {
-        pageId: "0jBspm8LH6wnlGdkwRh-tFEHw0JJVKtRQoyPh1A76Zssb7U1S5shpg5Hpzx_XWHL",
+        pageId: "lVjAjmkPCKPR4cjMNLQM-9kLsNqyJrEU_9pZsQVDfryXnJMLs_Q9cR3YD7MtLdTB",
         action: "process",
         campaign_id: CAMPAIGN_ID,
         connection_id: 1,
@@ -4199,6 +4575,7 @@ async function returnPaypal() {
         offer_id: getVrioOfferIdByProductId(product.item_id) ?? DEFAULT_OFFER_ID,
         item_id: Number(product.item_id),
         order_offer_quantity: product.order_offer_quantity,
+        ...(product.mainOffer ? { mainOffer: true } : {}),
       });
     });
 
@@ -4245,6 +4622,13 @@ async function returnPaypal() {
 
       const result = await response.json();
       if (result.success) {
+        try {
+          if (typeof sendKlaviyoOrderEvents === 'function') {
+            await sendKlaviyoOrderEvents(orderData, result, true);
+          }
+        } catch (error) {
+          console.error("Error sending order events to Klaviyo", error);
+        }
         sessionStorage.removeItem('cart');
         sessionStorage.removeItem('cart_token');
         sessionStorage.removeItem('payment_token_id');
@@ -4386,6 +4770,7 @@ const createCart = async (sanitizedOrderData) => {
         offers: sanitizedOrderData.offers,
         campaign_id: CAMPAIGN_ID,
         connection_id: sanitizedOrderData.connection_id,
+        pageId: sanitizedOrderData.pageId,
       }),
       keepalive: false,
     }
@@ -4739,6 +5124,7 @@ function handleFreeGiftParam(allProducts) {
               checked: checkbox ? checkbox.checked : true,
               quantity:
                 Number(
+                  activeOptionProduct.getAttribute("data-non-shippable-quantity") ||
                   activeOptionProduct.getAttribute("data-product-quantity")
                 ) || 1
             });
@@ -4876,6 +5262,21 @@ function handleFreeGiftParam(allProducts) {
               id: foundProduct.id || 0,
               price: unitPrices[index],
             };
+
+            const cardTextMatch = (card.textContent || '').match(/(\d+)\s*%\s*off/i);
+            const discountPct = Number(card.getAttribute('data-product-discount')) || Number(foundProduct.discountPercentage) || (cardTextMatch ? Number(cardTextMatch[1]) : 0);
+            if (discountPct) {
+              document.querySelectorAll('.mvmt-discount-amount').forEach((el) => {
+                if (/^\d+$/.test((el.textContent || '').trim())) {
+                  el.textContent = String(discountPct);
+                }
+              });
+              document.querySelectorAll('[data-url-param-timer] span').forEach((el) => {
+                if (el.textContent && /\d+%\s*discount/i.test(el.textContent)) {
+                  el.textContent = el.textContent.replace(/\d+(?=%\s*discount)/i, String(discountPct));
+                }
+              });
+            }
           }
         }
 
