@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 const EMAIL_OVERSIGHT_VALIDATE_URL = 'https://app-cms-api-proxy-staging-001.azurewebsites.net/integration/email-oversight/validate-public';
 
 
-const CHECKOUT_NEXT_PAGE_SLUG = "";
+const CHECKOUT_NEXT_PAGE_SLUG = "offer/1/thank-you";
 
 function getNextPageSlugForRedirect() {
   const normalize = (value) => {
@@ -619,7 +619,7 @@ async function createOrderViaWallet(confirmationToken, paymentMethodId) {
         ?.getAttribute("data-shipping-profile-id") || undefined;
 
   const orderData = {
-    pageId: "nhI5fAAvD40Pfsckf1ywqZoYOGCfwndb3t0peOfVDYfShanayyML5YKFh8QXES9g",
+    pageId: "W-ND_KckCE8L1Fv2KLeai6oqOtFgVuJN-7VCTSzJ0cGKl-Coz0NNJKQzkncuDhoG",
     action: "process",
     campaign_id: CAMPAIGN_ID,
     connection_id: 1,
@@ -1415,7 +1415,7 @@ async function createOrderViaPaypal(isExpress = false) {
   const shippingProfileId = +document.querySelector(`[data-product-id="${selectedProduct.id}"]`)?.getAttribute('data-shipping-profile-id') || undefined;
   const sameAddress = isSameAddress();
   const orderData = {
-    pageId: "nhI5fAAvD40Pfsckf1ywqZoYOGCfwndb3t0peOfVDYfShanayyML5YKFh8QXES9g",
+    pageId: "W-ND_KckCE8L1Fv2KLeai6oqOtFgVuJN-7VCTSzJ0cGKl-Coz0NNJKQzkncuDhoG",
     action: "process",
     campaign_id: CAMPAIGN_ID,
     connection_id: 1, // VRIO URL ending /connection
@@ -1715,7 +1715,7 @@ async function createOrderViaKlarna() {
   const sameAddress = isSameAddress();
 
   const orderData = {
-    pageId: "nhI5fAAvD40Pfsckf1ywqZoYOGCfwndb3t0peOfVDYfShanayyML5YKFh8QXES9g",
+    pageId: "W-ND_KckCE8L1Fv2KLeai6oqOtFgVuJN-7VCTSzJ0cGKl-Coz0NNJKQzkncuDhoG",
     campaign_id: CAMPAIGN_ID,
     connection_id: 1,
     email: email,
@@ -2094,7 +2094,7 @@ async function createOrderViaCreditCard() {
   let orderTotal = Math.max(0, Number(selectedProduct.price) * selectedProduct.quantity);
 
   const orderData = {
-    pageId: "nhI5fAAvD40Pfsckf1ywqZoYOGCfwndb3t0peOfVDYfShanayyML5YKFh8QXES9g",
+    pageId: "W-ND_KckCE8L1Fv2KLeai6oqOtFgVuJN-7VCTSzJ0cGKl-Coz0NNJKQzkncuDhoG",
     action: "process",
     campaign_id: CAMPAIGN_ID,
     connection_id: 1, // VRIO URL ending /connection
@@ -4492,7 +4492,7 @@ async function returnPaypal() {
 ;
 
     const body = {
-        pageId: "nhI5fAAvD40Pfsckf1ywqZoYOGCfwndb3t0peOfVDYfShanayyML5YKFh8QXES9g",
+        pageId: "W-ND_KckCE8L1Fv2KLeai6oqOtFgVuJN-7VCTSzJ0cGKl-Coz0NNJKQzkncuDhoG",
         action: "process",
         campaign_id: CAMPAIGN_ID,
         connection_id: 1,
