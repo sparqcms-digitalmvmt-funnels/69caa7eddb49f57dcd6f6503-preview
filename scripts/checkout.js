@@ -619,7 +619,7 @@ async function createOrderViaWallet(confirmationToken, paymentMethodId) {
         ?.getAttribute("data-shipping-profile-id") || undefined;
 
   const orderData = {
-    pageId: "GU-75kPYgXnEjpyfu19eXFrrPEjjqugJmWCFhtJ9ga6QbtykfuztxnuFdBCRuvB5",
+    pageId: "6kXUHhUJsb_Rhj9JDRzNBzNVt_tVGSGM2vDs8qiHk-U3Wa7ay2ywMHbyvjWHl8mx",
     action: "process",
     campaign_id: CAMPAIGN_ID,
     connection_id: 1,
@@ -1415,7 +1415,7 @@ async function createOrderViaPaypal(isExpress = false) {
   const shippingProfileId = +document.querySelector(`[data-product-id="${selectedProduct.id}"]`)?.getAttribute('data-shipping-profile-id') || undefined;
   const sameAddress = isSameAddress();
   const orderData = {
-    pageId: "GU-75kPYgXnEjpyfu19eXFrrPEjjqugJmWCFhtJ9ga6QbtykfuztxnuFdBCRuvB5",
+    pageId: "6kXUHhUJsb_Rhj9JDRzNBzNVt_tVGSGM2vDs8qiHk-U3Wa7ay2ywMHbyvjWHl8mx",
     action: "process",
     campaign_id: CAMPAIGN_ID,
     connection_id: 1, // VRIO URL ending /connection
@@ -1715,7 +1715,7 @@ async function createOrderViaKlarna() {
   const sameAddress = isSameAddress();
 
   const orderData = {
-    pageId: "GU-75kPYgXnEjpyfu19eXFrrPEjjqugJmWCFhtJ9ga6QbtykfuztxnuFdBCRuvB5",
+    pageId: "6kXUHhUJsb_Rhj9JDRzNBzNVt_tVGSGM2vDs8qiHk-U3Wa7ay2ywMHbyvjWHl8mx",
     campaign_id: CAMPAIGN_ID,
     connection_id: 1,
     email: email,
@@ -2094,7 +2094,7 @@ async function createOrderViaCreditCard() {
   let orderTotal = Math.max(0, Number(selectedProduct.price) * selectedProduct.quantity);
 
   const orderData = {
-    pageId: "GU-75kPYgXnEjpyfu19eXFrrPEjjqugJmWCFhtJ9ga6QbtykfuztxnuFdBCRuvB5",
+    pageId: "6kXUHhUJsb_Rhj9JDRzNBzNVt_tVGSGM2vDs8qiHk-U3Wa7ay2ywMHbyvjWHl8mx",
     action: "process",
     campaign_id: CAMPAIGN_ID,
     connection_id: 1, // VRIO URL ending /connection
@@ -4492,7 +4492,7 @@ async function returnPaypal() {
 ;
 
     const body = {
-        pageId: "GU-75kPYgXnEjpyfu19eXFrrPEjjqugJmWCFhtJ9ga6QbtykfuztxnuFdBCRuvB5",
+        pageId: "6kXUHhUJsb_Rhj9JDRzNBzNVt_tVGSGM2vDs8qiHk-U3Wa7ay2ywMHbyvjWHl8mx",
         action: "process",
         campaign_id: CAMPAIGN_ID,
         connection_id: 1,
