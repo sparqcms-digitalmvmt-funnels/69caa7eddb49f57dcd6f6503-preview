@@ -302,12 +302,13 @@ const elementsMappingContent = {
 
 
 document.addEventListener("DOMContentLoaded", async () => {
+  try {
   applyKlarnaVisibilityForThankYou();
   const orderids = JSON.parse(sessionStorage.getItem("orderids"));
 
   const endpoint =
     `orders?order_id=${orderids.join(",")}` +
-    `&with=order_offers,customer_address_billing,customer_address_shipping,customer,transactions,cart&pageId=E54_zij3OPfvKF-WH4KGMRgNJ-kZvrtU__7zCjo3hUWCgZzv5yjzKlNYh6a2hsWi`
+    `&with=order_offers,customer_address_billing,customer_address_shipping,customer,transactions,cart&pageId=fLsylCMEvYTQ4iIE4hAGUedBff5OdKygHXXROCKtpvTLcRjl3Fej0A29XnYPTrao`
 
   const response = await fetch(
     `https://app-cms-api-proxy-staging-001.azurewebsites.net/vrio/${endpoint}`,
@@ -880,6 +881,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   
+  } finally { if (window.__hidePreloader) window.__hidePreloader(); }
 });
 
 const vrioToTransaction = (orderResult) => {
